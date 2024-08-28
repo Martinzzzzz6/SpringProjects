@@ -68,8 +68,7 @@ public class PhotosController {
 
     @PostMapping("/photo")
     public Photo create(@RequestPart("data") MultipartFile file) throws IOException {
-
-        return photosService.put(file.getOriginalFilename(), file.getContentType(),file.getBytes());
+        return photosService.put(file.getOriginalFilename(), file.getContentType() ,file.getBytes());
     }
 
 }

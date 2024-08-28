@@ -1,8 +1,10 @@
 package com.personal.project.pgotosClone.service;
 
 import com.personal.project.pgotosClone.model.Photo;
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,10 +25,50 @@ public class PhotosService {
     }};
     private final String uploadDir = "/Users/martinmenchev/development/JavaWork/pgotosClone/src/main/resources/uploads/";
 
-    public PhotosService()
+    public PhotosService() throws IOException {
+        File directory = new File(uploadDir);
+        startUpInit();
+    }
+
+
+    @PostConstruct
+    public void startUpInit()
     {
         File directory = new File(uploadDir);
+        File[] files = directory.listFiles();
+
+            if(files != null)
+            {
+                for (File file : files)
+                {
+                    try {
+
+                        String fileName = file.getName();
+                        String[] parts = fileName.split("\\.",2);
+
+                        int photoId = Integer.parseInt(parts[0]);
+                        byte[] data = Files.readAllBytes(file.toPath());
+
+                        String contentType = Files.probeContentType(file.toPath());
+
+                        Photo photo = new Photo(photoId,fileName);
+                        photo.setData(data);
+                        photo.setContentType(contentType);
+                        photo.setFilePath(file.getAbsolutePath());
+
+
+                        db.put(photoId,photo);
+                        id = Math.max(id,photoId);
+
+
+                    } catch (IOException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+            }
     }
+
 
     public Collection<Photo> getAll() {
         return db.values();
@@ -38,6 +80,28 @@ public class PhotosService {
 
     public Photo remove(Integer id) {
         deletedIds.add(id);
+        File directory = new File(uploadDir);
+        File[] files = directory.listFiles();
+
+        if(files != null)
+        {
+            for(File file : files)
+            {
+                String fileName = file.getName();
+                String[] parts = fileName.split("\\.",2);
+
+                if(Objects.equals(parts[0], id.toString()))
+                {
+                    if(file.delete())
+                    {
+                        System.out.println("File " + fileName + " deleted from folder");
+                    }
+                    else {
+                        System.out.println("Failed to delete file " + fileName);
+                    }
+                }
+            }
+        }
         return db.remove(id);
     }
 
@@ -76,6 +140,20 @@ public class PhotosService {
 //        return photo;
 //    }
 
+    public String helper(String type) throws IOException {
+        switch (type)
+        {
+            case "image/jpeg":
+                return "jpeg";
+            case "image/png":
+                return "png";
+            case "image/gif":
+                return "gif";
+            default:
+                throw new IllegalArgumentException("Unsupported file type:" + type);
+        }
+    }
+
     public Photo put(String fileName, String contentType, byte[] data) throws IOException {
         Photo photo = new Photo();
 
@@ -90,7 +168,7 @@ public class PhotosService {
             newId = ++id;
         }
 
-        String filePath = uploadDir + newId + "_" + fileName;
+        String filePath = uploadDir + newId + "." + helper(contentType.toLowerCase());
         Path path = Paths.get(filePath);
 
         Files.write(path,data);
