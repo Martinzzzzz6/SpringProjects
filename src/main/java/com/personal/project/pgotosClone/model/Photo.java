@@ -2,26 +2,20 @@ package com.personal.project.pgotosClone.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotEmpty;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Table;
 
+@Table("PHOTOS")
 public class Photo {
+
+    @Id
     private Integer id;
     @NotEmpty
     private String fileName;
-
-    @JsonIgnore
-    private String filePath;
     @JsonIgnore
     private byte[] data;
 
     private String contentType;
-
-    public String getFilePath() {
-        return filePath;
-    }
-
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
-    }
 
     public String getContentType() {
         return contentType;
@@ -42,10 +36,10 @@ public class Photo {
     public Photo() {
     }
 
-    public Photo(Integer id, String fileName) {
-        this.id = id;
-        this.fileName = fileName;
-    }
+//    public Photo(Integer id, String fileName) {
+//        this.id = id;
+//        this.fileName = fileName;
+//    }
 
     public Integer getId() {
         return id;

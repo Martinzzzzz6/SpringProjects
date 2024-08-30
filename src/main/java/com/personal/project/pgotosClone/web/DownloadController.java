@@ -24,23 +24,48 @@ public class DownloadController {
     }
 
     @GetMapping("/show/{id}")
+    public ResponseEntity<byte[]> show(@PathVariable Integer id) throws IOException
+    {
+        Photo photo = photosService.get(id);
+
+        if(photo == null)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Photo does not exist");
+        }
+
+//        Path path = Paths.get(photo.getFilePath());
+
+        byte[] data = photo.getData();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.valueOf(photo.getContentType()));
+
+        ContentDisposition build = ContentDisposition
+                .builder("inline")
+                .filename(photo.getFileName())
+                .build();
+
+        headers.setContentDisposition(build);
+
+
+        return new ResponseEntity<>(data, headers, HttpStatus.OK);
+    }
+
+    @GetMapping("/download/{id}")
     public ResponseEntity<byte[]> download(@PathVariable Integer id) throws IOException
     {
         Photo photo = photosService.get(id);
 
         if(photo == null)
         {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Photo is not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Photo does not exist");
         }
 
-        Path path = Paths.get(photo.getFilePath());
-
-        byte[] data = Files.readAllBytes(path);
+        byte[] data = photo.getData();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.valueOf(photo.getContentType()));
 
         ContentDisposition build = ContentDisposition
-                .builder("inline")
+                .builder("attachment")
                 .filename(photo.getFileName())
                 .build();
 

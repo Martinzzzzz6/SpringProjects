@@ -26,7 +26,7 @@ public class PhotosController {
     }
 
     @GetMapping("/photos")
-    public Collection<Photo> get()
+    public Iterable<Photo> get()
     {
         return photosService.getAll();
     }
@@ -46,13 +46,7 @@ public class PhotosController {
 
     @DeleteMapping("/photo/delete/{id}")
     public void delete(@PathVariable Integer id) {
-        Photo photo = photosService.remove(id);
-
-        if (photo == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Photo is not found");
-        }
-        photosService.add(id);
-
+        photosService.delete(id);
     }
 
     @DeleteMapping("/photo/deleteAll")
