@@ -3,6 +3,7 @@ package com.personal.project.pgotosClone.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotEmpty;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.relational.core.mapping.Table;
 
 @Table("PHOTOS")
@@ -17,6 +18,7 @@ public class Photo {
 
     private String contentType;
 
+    @Transient
     private String filePath;
 
     public String getFilePath() {

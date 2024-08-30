@@ -56,9 +56,8 @@ public class DownloadService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
-        Path path = Paths.get(photo.getFilePath());
 
-        byte[] data = Files.readAllBytes(path);
+        byte[] data = photo.getData();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.valueOf(photo.getContentType()));
 
