@@ -1,77 +1,43 @@
 package com.personal.project.pgotosClone.web;
 
-import com.personal.project.pgotosClone.model.Photo;
-import com.personal.project.pgotosClone.service.PhotosService;
-import jdk.jfr.ContentType;
+import com.personal.project.pgotosClone.service.DownloadService;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 @RestController
 public class DownloadController {
 
-    private final PhotosService photosService;
+    private final DownloadService downloadService;
 
-    public DownloadController(PhotosService photosService) {
-        this.photosService = photosService;
+    public DownloadController(DownloadService downloadService) {
+        this.downloadService = downloadService;
     }
 
-    @GetMapping("/show/{id}")
-    public ResponseEntity<byte[]> show(@PathVariable Integer id) throws IOException
+    @GetMapping("/local/show/{id}")
+    public ResponseEntity<byte[]> showLocal(@PathVariable Integer id) throws IOException
     {
-        Photo photo = photosService.get(id);
-
-        if(photo == null)
-        {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Photo does not exist");
-        }
-
-//        Path path = Paths.get(photo.getFilePath());
-
-        byte[] data = photo.getData();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.valueOf(photo.getContentType()));
-
-        ContentDisposition build = ContentDisposition
-                .builder("inline")
-                .filename(photo.getFileName())
-                .build();
-
-        headers.setContentDisposition(build);
-
-
-        return new ResponseEntity<>(data, headers, HttpStatus.OK);
+        return downloadService.helperLocal(id,"inline");
     }
 
-    @GetMapping("/download/{id}")
-    public ResponseEntity<byte[]> download(@PathVariable Integer id) throws IOException
+    @GetMapping("/local/download/{id}")
+    public ResponseEntity<byte[]> downloadLocal(@PathVariable Integer id) throws IOException
     {
-        Photo photo = photosService.get(id);
+       return downloadService.helperLocal(id, "attachment");
+    }
 
-        if(photo == null)
-        {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Photo does not exist");
-        }
+    @GetMapping("/database/show/{id}")
+    public ResponseEntity<byte[]> showDatabase(@PathVariable Integer id) throws IOException
+    {
+        return downloadService.helperDatabse(id,"inline");
+    }
 
-        byte[] data = photo.getData();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.valueOf(photo.getContentType()));
-
-        ContentDisposition build = ContentDisposition
-                .builder("attachment")
-                .filename(photo.getFileName())
-                .build();
-
-        headers.setContentDisposition(build);
-
-
-        return new ResponseEntity<>(data, headers, HttpStatus.OK);
+    @GetMapping("/database/download/{id}")
+    public ResponseEntity<byte[]> downloadDatabase(@PathVariable Integer id) throws IOException
+    {
+        return downloadService.helperDatabse(id, "attachment");
     }
 }

@@ -2,28 +2,47 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Photo Upload</title>
 </head>
 <body>
 
-
-
 <h2>Photo Upload</h2>
 
-
-<input id="fileupload" type="file" name="fileupload" />
-<button id="upload-button" onclick="uploadFile()">Upload</button>
+<form id="upload-form">
+    <input id="fileupload" type="file" name="fileupload" />
+    <br/>
+    <label>
+        <input type="radio" name="storage" value="database" checked> Save to Database
+    </label>
+    <label>
+        <input type="radio" name="storage" value="file"> Save to Local File
+    </label>
+    <br/>
+    <button id="upload-button" type="button" onclick="uploadFile(event)">Upload</button>
+</form>
 
 <script>
-  async function uploadFile() {
-    let formatData = new FormData();
-    formatData.append("data", fileupload.files[0]);
-    await fetch('http://localhost:8080/photo', {
-      method: "POST",
-      body: formatData
-    }).then(result =>  result.text())
-            .then(text => alert(text));
-  }
+    async function uploadFile(event) {
+        event.preventDefault(); // Prevent the form from submitting the traditional way
+        let formatData = new FormData();
+        formatData.append("data", fileupload.files[0]);
+        formatData.append("storage", document.querySelector('input[name="storage"]:checked').value);
+
+        await fetch('http://localhost:8080/photo', {
+            method: "POST",
+            body: formatData
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok: ' + response.statusText);
+                }
+                return response.text();
+            })
+            .then(text => alert(text))
+            .catch(error => alert('There was a problem with your upload: ' + error.message));
+    }
+
 </script>
+
 </body>
 </html>

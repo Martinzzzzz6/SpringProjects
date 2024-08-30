@@ -17,6 +17,16 @@ public class Photo {
 
     private String contentType;
 
+    private String filePath;
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
     public String getContentType() {
         return contentType;
     }
@@ -36,10 +46,10 @@ public class Photo {
     public Photo() {
     }
 
-//    public Photo(Integer id, String fileName) {
-//        this.id = id;
-//        this.fileName = fileName;
-//    }
+    public Photo(Integer id, String fileName) {
+        this.id = id;
+        this.fileName = fileName;
+    }
 
     public Integer getId() {
         return id;
