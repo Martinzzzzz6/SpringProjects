@@ -46,33 +46,28 @@ public class PhotosController2 {
         return photosService.getAllPhotosDatabase();
     }
 
-    @DeleteMapping("/photo/delete/{id}")
-    public void deleteById(@PathVariable Integer id,
-                           @RequestParam("storage") String storage)
+    @DeleteMapping ("/database/delete/{id}")
+    public void deletePhotoDatabase(@PathVariable Integer id)
     {
-        boolean fromDatabase = "database".equalsIgnoreCase(storage);
-
-        photosService.deletePhoto(id,fromDatabase);
+        photosService.deletePhotoDatabase(id);
     }
 
-    @DeleteMapping("/photo/deleteAll")
-    public void deleteAll(@RequestParam("storage") String storage)
+    @DeleteMapping("/local/delete/{id}")
+    public void deletePhotoLocal(@PathVariable Integer id)
     {
-        boolean fromDatabase = "database".equalsIgnoreCase(storage);
+        photosService.deletePhotoLocal(id);
+    }
 
-        photosService.deleteAll(fromDatabase);
-    }
-    @GetMapping("/")
-    public String home()
+    @DeleteMapping("/database/deleteAll")
+    public void deleteAllDatabase()
     {
-        return "index";
+        photosService.deleteAllDatabase();
     }
-    @GetMapping("/photoes")
-    public String photosRedirect(@RequestParam(required = false) String storage) {
-        if(storage == null || storage.isEmpty())
-        {
-            return "index";
-        }
-        return "photos";
+
+    @DeleteMapping("/local/deleteAll")
+    public void deleteAllLocal()
+    {
+        photosService.deleteAllLocal();
     }
+
 }

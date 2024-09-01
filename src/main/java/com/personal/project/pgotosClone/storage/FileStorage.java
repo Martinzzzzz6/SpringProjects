@@ -170,5 +170,21 @@ public class FileStorage implements PhotosStorage{
             db.clear();
             id = 0;
             deletedIds.clear();
+
+            File directory = new File(uploadDir);
+            File[] files = directory.listFiles();
+
+            if(files != null)
+            {
+                for(File file : files)
+                {
+                    String fileName = file.getName();
+                    if(file.delete()) {
+                        System.out.println(fileName + " successfully deleted!");
+                    } else {
+                        System.out.println("Error :(");
+                    }
+                }
+            }
     }
 }

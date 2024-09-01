@@ -51,27 +51,24 @@ public class PhotosService2 {
         return databaseStorage.getAll();
     }
 
-    public void deletePhoto(Integer id, boolean fromDatabase)
+    public void deletePhotoDatabase(Integer id)
     {
-        if(fromDatabase)
-        {
-            databaseStorage.delete(id);
-        }
-        else
-        {
-            fileStorage.delete(id);
-        }
+        databaseStorage.delete(id);
     }
 
-    public void deleteAll(boolean fromDatabase)
+    public void deletePhotoLocal(Integer id)
     {
-        if(fromDatabase)
-        {
-            databaseStorage.deleteAll();
-        }
-        else
-        {
-            fileStorage.deleteAll();
-        }
+        fileStorage.delete(id);
     }
+
+    public void deleteAllDatabase()
+    {
+        databaseStorage.deleteAll();
+    }
+
+    public void deleteAllLocal()
+    {
+        fileStorage.deleteAll();
+    }
+
 }
