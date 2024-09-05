@@ -187,4 +187,9 @@ public class FileStorage implements PhotosStorage{
                 }
             }
     }
+
+    @Override
+    public StorageType getStorageType() {
+        return StorageType.FILE;
+    }
 }

@@ -3,6 +3,7 @@ package com.personal.project.pgotosClone.web;
 
 import com.personal.project.pgotosClone.model.Photo;
 import com.personal.project.pgotosClone.service.PhotosService2;
+import com.personal.project.pgotosClone.storage.StorageType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,55 +20,56 @@ public class PhotosController2 {
     @PostMapping("/photo")
     public Photo create(@RequestPart("data")MultipartFile file,
                         @RequestParam("storage") String storage) throws IOException {
-        boolean saveToDatabase = "database".equalsIgnoreCase(storage);
 
-        return photosService.savePhoto(file.getOriginalFilename(),file.getContentType(),file.getBytes(),saveToDatabase);
+        StorageType storageType = StorageType.valueOf(storage.toUpperCase());
+
+        return photosService.savePhoto(file.getOriginalFilename(),file.getContentType(),file.getBytes(),storageType);
     }
 
     @GetMapping("/local/photo/{id}")
     public Photo readByIdLocal(@PathVariable Integer id) {
-        return photosService.getPhotoLocal(id);
+        return photosService.get(id, StorageType.FILE);
     }
 
     @GetMapping("/database/photo/{id}")
     public Photo readByIdDatabase(@PathVariable Integer id) {
-        return photosService.getPhotoDatabase(id);
+        return photosService.get(id, StorageType.DATABASE);
     }
 
     @GetMapping("/local/photos")
     public Iterable<Photo> getAllLocal()
     {
-        return photosService.getAllPhotosLocal();
+        return photosService.getAll(StorageType.FILE);
     }
 
     @GetMapping("/database/photos")
     public Iterable<Photo> getAllDatabase()
     {
-        return photosService.getAllPhotosDatabase();
+        return photosService.getAll(StorageType.DATABASE);
     }
 
     @DeleteMapping ("/database/delete/{id}")
     public void deletePhotoDatabase(@PathVariable Integer id)
     {
-        photosService.deletePhotoDatabase(id);
+        photosService.delete(id, StorageType.DATABASE);
     }
 
     @DeleteMapping("/local/delete/{id}")
     public void deletePhotoLocal(@PathVariable Integer id)
     {
-        photosService.deletePhotoLocal(id);
+        photosService.delete(id, StorageType.FILE);
     }
 
     @DeleteMapping("/database/deleteAll")
     public void deleteAllDatabase()
     {
-        photosService.deleteAllDatabase();
+        photosService.deleteAll(StorageType.DATABASE);
     }
 
     @DeleteMapping("/local/deleteAll")
     public void deleteAllLocal()
     {
-        photosService.deleteAllLocal();
+        photosService.deleteAll(StorageType.FILE);
     }
 
 }

@@ -2,6 +2,7 @@ package com.personal.project.pgotosClone.service;
 
 import com.personal.project.pgotosClone.model.Photo;
 import com.personal.project.pgotosClone.service.PhotosService2;
+import com.personal.project.pgotosClone.storage.StorageType;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,7 +25,7 @@ public class DownloadService {
 
     public ResponseEntity<byte[]> helperLocal(Integer id, String showType) throws IOException
     {
-        Photo photo = photosService.getPhotoLocal(id);
+        Photo photo = photosService.get(id, StorageType.FILE);
 
         if(photo == null)
         {
@@ -49,7 +50,7 @@ public class DownloadService {
 
     public ResponseEntity<byte[]> helperDatabse(Integer id, String showType) throws IOException
     {
-        Photo photo = photosService.getPhotoDatabase(id);
+        Photo photo = photosService.get(id, StorageType.DATABASE);
 
         if(photo == null)
         {

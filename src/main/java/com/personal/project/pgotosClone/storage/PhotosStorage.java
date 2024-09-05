@@ -10,4 +10,5 @@ public interface PhotosStorage {
     void delete(Integer id);
     Iterable<Photo> getAll();
     void deleteAll();
+    StorageType getStorageType();
 }

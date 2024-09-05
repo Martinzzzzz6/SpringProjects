@@ -47,4 +47,9 @@ public class DatabaseStorage implements PhotosStorage {
         photosRepo.deleteAll();
     }
 
+    @Override
+    public StorageType getStorageType() {
+        return StorageType.DATABASE;
+    }
+
 }
