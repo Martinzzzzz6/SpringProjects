@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Photo Upload</title>
+</head>
+<body>
+
+<h2>Photo Upload</h2>
+
+<form id="upload-form">
+    <input id="fileupload" type="file" name="fileupload" />
+    <br/>
+    <label>
+        <input type="radio" name="storage" value="database" checked> Save to Database
+    </label>
+    <label>
+        <input type="radio" name="storage" value="file"> Save to Local File
+    </label>
+    <br/>
+    <button id="upload-button" type="button" onclick="uploadFile(event)">Upload</button>
+    <br/>
+    <br/>
+
+    <button id="delete-data" type="button" onclick="deleteDatabase()">Delete Database</button>
+    <br/>
+    <br/>
+    <button id="delete-local" type="button" onclick="deleteLocal()">Delete Local</button>
+</form>
+
+<script>
+    async function uploadFile(event) {
+        event.preventDefault();
+        let formatData = new FormData();
+        formatData.append("data", fileupload.files[0]);
+        formatData.append("storage", document.querySelector('input[name="storage"]:checked').value);
+
+        await fetch('http://localhost:8080/photo', {
+            method: "POST",
+            body: formatData
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok: ' + response.statusText);
+                }
+                return response.text();
+            })
+            .then(text => alert(text))
+            .catch(error => alert('There was a problem with your upload: ' + error.message));
+    }
+
+    async function deleteDatabase() {
+        if(confirm("Are you sure you want to delete your database?")) {
+            await fetch('http://localhost:8080/database/deleteAll', {
+                method: "DELETE"
+            })
+                .then(response => {
+                    if(!response.ok) {
+                        throw new Error("Error :( " + response.statusText);
+                    }
+                    alert("All photos are deleted from the database");
+                })
+                .catch(error => alert("There was a problem deleting the photos " + error.message));
+        }
+    }
+
+    async function deleteLocal()
+    {
+        if(confirm("Are you sure you want to delete all local files?")) {
+            await fetch('http://localhost:8080/local/deleteAll', {
+                method: "DELETE"
+            })
+                .then(response => {
+                    if(!response.ok) {
+                        throw new Error("Error :(( " + response.statusText);
+                    }
+                    alert("All photos from the local storage are deleted!")
+                })
+                .catch(error => alert("There was a problem deleting the photos from the local storage " + error.message));
+        }
+    }
+
+</script>
+
+</body>
+</html>
