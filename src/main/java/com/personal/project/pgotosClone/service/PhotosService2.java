@@ -28,6 +28,11 @@ public class PhotosService2 {
                 .orElseThrow(() -> new IllegalArgumentException("No storage type found: " + storageType));
     }
 
+    public static boolean isSupportedContentType(String contentType)
+    {
+        return "image/png".equalsIgnoreCase(contentType) || "image/jpeg".equalsIgnoreCase(contentType) || "image/gif".equalsIgnoreCase(contentType);
+    }
+
     public Photo savePhoto(String fileName, String contentType, byte[] data, StorageType storageType) throws IOException
     {
         PhotosStorage storage = getStorageByType(storageType);

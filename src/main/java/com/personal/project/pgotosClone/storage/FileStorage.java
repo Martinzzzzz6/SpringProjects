@@ -86,7 +86,7 @@ public class FileStorage implements PhotosStorage{
                 case "image/png":
                     return "png";
                 case "image/jpeg":
-                    return "jped";
+                    return "jpeg";
                 case "image/gif":
                     return "gif";
                 default:
