@@ -41,7 +41,7 @@
         })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('Network response was not ok: ' + response.statusText);
+                    throw new Error('You have not selected a file to be uploaded' + response.statusText);
                 }
                 return response.text();
             })

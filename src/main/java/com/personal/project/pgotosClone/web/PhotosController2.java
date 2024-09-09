@@ -1,6 +1,7 @@
 package com.personal.project.pgotosClone.web;
 
 
+import com.personal.project.pgotosClone.errors.FileEmptyException;
 import com.personal.project.pgotosClone.model.Photo;
 import com.personal.project.pgotosClone.service.PhotosService2;
 import com.personal.project.pgotosClone.storage.StorageType;
@@ -18,13 +19,17 @@ public class PhotosController2 {
     }
 
     @PostMapping("/photo")
-    public Photo create(@RequestPart("data")MultipartFile file,
+    public Photo create(@RequestPart("data") MultipartFile file,
                         @RequestParam("storage") String storage) throws IOException {
 
-        StorageType storageType = StorageType.valueOf(storage.toUpperCase());
+        if (file.isEmpty()) {
+            throw new FileEmptyException("No file was uploaded. Please select a file to upload.");
+        }
 
-        return photosService.savePhoto(file.getOriginalFilename(),file.getContentType(),file.getBytes(),storageType);
+        StorageType storageType = StorageType.valueOf(storage.toUpperCase());
+        return photosService.savePhoto(file.getOriginalFilename(), file.getContentType(), file.getBytes(), storageType);
     }
+
 
     @GetMapping("/local/photo/{id}")
     public Photo readByIdLocal(@PathVariable Integer id) {
@@ -47,6 +52,8 @@ public class PhotosController2 {
     {
         return photosService.getAll(StorageType.DATABASE);
     }
+
+
 
     @DeleteMapping ("/database/delete/{id}")
     public void deletePhotoDatabase(@PathVariable Integer id)
